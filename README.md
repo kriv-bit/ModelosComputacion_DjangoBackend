@@ -1,137 +1,284 @@
-# Django REST Framework API for Books
+# 📚 API REST de Libros - Django + Docker
 
-This project provides a complete API for managing books using Django and Django REST Framework. It includes endpoints to list and create books, and is containerized with Docker and Docker Compose.
+![Django](https://img.shields.io/badge/Django-092E20?style=for-the-badge&logo=django&logoColor=white)
+![Django REST](https://img.shields.io/badge/Django_REST-ff1709?style=for-the-badge&logo=django&logoColor=white)
+![PostgreSQL](https://img.shields.io/badge/PostgreSQL-316192?style=for-the-badge&logo=postgresql&logoColor=white)
+![Docker](https://img.shields.io/badge/Docker-2CA5E0?style=for-the-badge&logo=docker&logoColor=white)
+![Python](https://img.shields.io/badge/Python-FFD43B?style=for-the-badge&logo=python&logoColor=blue)
 
-## Features
+**Una API REST moderna y escalable para gestión de libros, desarrollada con Django REST Framework y contenerizada con Docker.** Proyecto académico para la Universidad de Nariño.
 
-- Django REST Framework API
-- Book model with title, author, ISBN, and publication date
-- GET `/api/libros/` - List all books
-- POST `/api/libros/` - Create a new book
-- PostgreSQL database (with SQLite fallback)
-- Docker containerization
+---
 
-## Project Structure
+## ✨ Características Principales
+
+- 🚀 **API REST completa** con endpoints para CRUD de libros
+- 🐳 **Contenerización completa** con Docker y Docker Compose
+- 🗄️ **Base de datos PostgreSQL** optimizada para producción
+- 📊 **Panel de administración Django** intuitivo y personalizable
+- 🔧 **Configuración dual** SQLite (desarrollo local) / PostgreSQL (producción)
+- 📦 **Migraciones automáticas** al iniciar el contenedor
+- 🔐 **Variables de entorno** para configuración segura
+- 📝 **Documentación API** integrada y detallada
+
+---
+
+## 🏫 Contexto Académico
+
+| | |
+|:---|:---|
+| **Universidad** | Universidad de Nariño |
+| **Facultad** | Facultad de Ingeniería |
+| **Materia** | Modelos de Computación |
+| **Semestre** | 2026-1 |
+| **Profesor** | Por definir |
+
+### 👥 Integrantes del Proyecto
+
+| Nombre | Rol | Contacto |
+|:---|:---|:---|
+| **Kevin Orlando Rivera Lasso** | Backend Developer | [GitHub](https://github.com/tu-usuario) |
+| **Daniel Alejandro Lasso Molina** | DevOps & Database | [GitHub](https://github.com/tu-usuario) |
+
+---
+
+## 🏗️ Arquitectura del Proyecto
 
 ```
-mi_proyecto/
-├── libros/                    # Django app
-│   ├── migrations/           # Database migrations
-│   ├── models.py            # Book model
-│   ├── serializers.py       # DRF serializer
-│   ├── views.py             # API views
-│   └── urls.py              # App URLs
-├── mi_proyecto/             # Project settings
-├── manage.py
-├── requirements.txt
-├── Dockerfile
-├── docker-compose.yml
-└── .dockerignore
+📦 django-backend-libros
+├── 📁 libros/                    # Aplicación Django principal
+│   ├── 📁 migrations/           # Migraciones de base de datos
+│   ├── 📄 models.py            # Modelo Libro (titulo, autor, ISBN, fecha)
+│   ├── 📄 serializers.py       # Serializadores DRF
+│   ├── 📄 views.py             # Vistas API (GET, POST)
+│   ├── 📄 urls.py              # Rutas de la aplicación
+│   ├── 📄 admin.py             # Configuración del panel admin
+│   └── 📄 tests.py             # Pruebas unitarias
+├── 📁 mi_proyecto/             # Configuración principal del proyecto
+│   ├── 📄 settings.py          # Configuración Django (BD, apps, etc.)
+│   ├── 📄 urls.py              # Rutas principales (admin, api)
+│   └── 📄 wsgi.py              # Configuración WSGI para producción
+├── 📄 Dockerfile               # Contenerización de la aplicación
+├── 📄 docker-compose.yml       # Orquestación de servicios (Django + PostgreSQL)
+├── 📄 requirements.txt         # Dependencias de Python
+├── 📄 .env                     # Variables de entorno (seguras)
+└── 📄 README.md               # Esta documentación
 ```
 
-## Setup and Running
+---
 
-### Option 1: Using Docker Compose (Recommended)
+## 🚀 Inicio Rápido
 
-1. Make sure you have Docker and Docker Compose installed.
+### Opción 1: Docker Compose (Recomendada)
 
-2. Clone the repository and navigate to the project directory.
+```bash
+# 1. Clonar el repositorio
+git clone https://github.com/tu-usuario/django-backend-libros.git
+cd django-backend-libros
 
-3. Build and start the services:
-   ```bash
-   docker-compose up --build
-   ```
+# 2. Construir y levantar los contenedores
+docker-compose up --build
 
-4. The API will be available at `http://localhost:8000/api/libros/`
+# 3. Acceder a la aplicación
+# API:      http://localhost:8000/api/libros/
+# Admin:    http://localhost:8000/admin/
+```
 
-5. To stop the services:
-   ```bash
-   docker-compose down
-   ```
+### Opción 2: Desarrollo Local (sin Docker)
 
-### Option 2: Local Development (without Docker)
+```bash
+# 1. Crear entorno virtual
+python -m venv venv
+source venv/bin/activate  # Linux/Mac
+# venv\Scripts\activate   # Windows
 
-1. Create a virtual environment:
-   ```bash
-   python -m venv venv
-   source venv/bin/activate  # On Windows: venv\Scripts\activate
-   ```
+# 2. Instalar dependencias
+pip install -r requirements.txt
 
-2. Install dependencies:
-   ```bash
-   pip install -r requirements.txt
-   ```
+# 3. Configurar variables de entorno
+cp .env.example .env  # Editar con tus valores
 
-3. Apply migrations:
-   ```bash
-   python manage.py migrate
-   ```
+# 4. Aplicar migraciones
+python manage.py migrate
 
-4. Run the development server:
-   ```bash
-   python manage.py runserver
-   ```
+# 5. Crear superusuario
+python manage.py createsuperuser
 
-5. Access the API at `http://localhost:8000/api/libros/`
+# 6. Ejecutar servidor
+python manage.py runserver
+```
 
-## API Endpoints
+---
 
-### List Books
-- **URL:** `/api/libros/`
-- **Method:** `GET`
-- **Success Response:**
-  ```json
-  [
-    {
-      "id": 1,
-      "titulo": "El Quijote",
-      "autor": "Miguel de Cervantes",
-      "isbn": "9788424113496",
-      "fecha_publicacion": "2026-04-14"
-    }
-  ]
-  ```
+## 📡 Endpoints de la API
 
-### Create Book
-- **URL:** `/api/libros/`
-- **Method:** `POST`
-- **Headers:** `Content-Type: application/json`
-- **Request Body:**
-  ```json
+### 📖 Listar Libros
+```http
+GET /api/libros/
+```
+**Respuesta Exitosa (200 OK):**
+```json
+[
   {
+    "id": 1,
     "titulo": "Cien años de soledad",
     "autor": "Gabriel García Márquez",
-    "isbn": "9788437604947"
+    "isbn": "9788437604947",
+    "fecha_publicacion": "2026-04-14"
   }
-  ```
-- **Note:** `fecha_publicacion` is automatically set to the current date.
-
-## Database Configuration
-
-By default, the project uses SQLite. When running with Docker Compose, it automatically switches to PostgreSQL using environment variables.
-
-To use PostgreSQL locally, set the environment variable:
-```bash
-export DB_ENGINE=postgresql
+]
 ```
 
-## Development
+### ➕ Crear Nuevo Libro
+```http
+POST /api/libros/
+Content-Type: application/json
+```
+**Cuerpo de la Solicitud:**
+```json
+{
+  "titulo": "El amor en los tiempos del cólera",
+  "autor": "Gabriel García Márquez",
+  "isbn": "9780307389732"
+}
+```
+**Nota:** El campo `fecha_publicacion` se establece automáticamente a la fecha actual.
 
-### Running Tests
-```bash
-python manage.py test libros
+---
+
+## ⚙️ Configuración de Base de Datos
+
+El proyecto soporta dos motores de base de datos:
+
+### 🐘 PostgreSQL (Producción/Docker)
+```yaml
+# Configuración automática en Docker
+DB_ENGINE=postgresql
+DB_NAME=mi_proyecto
+DB_USER=django_app_user
+DB_PASSWORD=passwordseguradjango
+DB_HOST=db
+DB_PORT=5432
 ```
 
-### Creating Migrations
-After modifying models:
+### 🗃️ SQLite (Desarrollo Local)
+```python
+# Configuración por defecto
+DATABASES = {
+    'default': {
+        'ENGINE': 'django.db.backends.sqlite3',
+        'NAME': BASE_DIR / 'db.sqlite3',
+    }
+}
+```
+
+---
+
+## 🛠️ Comandos Útiles
+
+### 🔨 Desarrollo
 ```bash
-python manage.py makemigrations libros
+# Aplicar migraciones
 python manage.py migrate
+
+# Crear migraciones después de cambios en modelos
+python manage.py makemigrations libros
+
+# Ejecutar pruebas
+python manage.py test libros
+
+# Crear superusuario para el admin
+python manage.py createsuperuser
 ```
 
-### Admin Interface
-Access the Django admin at `http://localhost:8000/admin/` (create a superuser first with `python manage.py createsuperuser`).
+### 🐳 Docker
+```bash
+# Construir imágenes
+docker-compose build
 
-## License
+# Levantar servicios en segundo plano
+docker-compose up -d
 
-This project is for educational purposes.
+# Ver logs
+docker-compose logs -f web
+
+# Detener servicios
+docker-compose down
+
+# Eliminar volúmenes (cuidado: borra datos)
+docker-compose down -v
+```
+
+---
+
+## 🎨 Panel de Administración
+
+Accede al panel de administración en:
+```
+http://localhost:8000/admin/
+```
+
+**Características del panel:**
+- 👥 Gestión de usuarios y permisos
+- 📚 CRUD completo de libros
+- 🔍 Búsqueda y filtrado avanzado
+- 📊 Interfaz responsive y moderna
+- 🔐 Autenticación segura con Django
+
+---
+
+## 🌐 Despliegue en Producción
+
+### Recomendaciones para Producción:
+1. **Cambiar `DEBUG=False`** en `.env`
+2. **Configurar `ALLOWED_HOSTS`** con tu dominio
+3. **Usar PostgreSQL** en lugar de SQLite
+4. **Configurar SSL/TLS** para tráfico seguro
+5. **Implementar backup automático** de la base de datos
+6. **Configurar logging** adecuado
+7. **Usar Gunicorn/Uvicorn** como servidor ASGI/WSGI
+
+### Ejemplo con Gunicorn:
+```bash
+gunicorn --workers 4 --bind 0.0.0.0:8000 mi_proyecto.wsgi:application
+```
+
+---
+
+## 🤝 Contribuciones
+
+Este proyecto es académico, pero si deseas contribuir:
+
+1. 🍴 Haz un fork del proyecto
+2. 🌿 Crea una rama para tu feature (`git checkout -b feature/awesome-feature`)
+3. 💾 Realiza tus cambios y commitea (`git commit -m 'Add awesome feature'`)
+4. 🚀 Push a la rama (`git push origin feature/awesome-feature`)
+5. 🔄 Abre un Pull Request
+
+---
+
+## 📄 Licencia
+
+Este proyecto fue desarrollado con fines académicos para la **Universidad de Nariño** en el marco de la asignatura **Modelos de Computación**.
+
+**© 2026 - Kevin Orlando Rivera Lasso & Daniel Alejandro Lasso Molina**
+
+---
+
+## 🙏 Agradecimientos
+
+- **Universidad de Nariño** por la formación académica
+- **Docentes de Modelos de Computación** por la guía y conocimientos
+- **Comunidad Django** por el excelente framework
+- **Docker** por las herramientas de contenerización
+
+---
+
+<div align="center">
+
+### 🚀 **¡Listo para empezar!**
+
+[![Open in Docker](https://img.shields.io/badge/Desplegar_con_Docker-2CA5E0?style=for-the-badge&logo=docker&logoColor=white)](https://docs.docker.com/compose/)
+[![Django Docs](https://img.shields.io/badge/Ver_Documentación_Django-092E20?style=for-the-badge&logo=django&logoColor=white)](https://docs.djangoproject.com/)
+
+</div>
