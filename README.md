@@ -37,8 +37,8 @@
 
 | Nombre | Rol | Contacto |
 |:---|:---|:---|
-| **Kevin Orlando Rivera Lasso** | Backend Developer | [GitHub](https://github.com/tu-usuario) |
-| **Daniel Alejandro Lasso Molina** | DevOps & Database | [GitHub](https://github.com/tu-usuario) |
+| **Kevin Orlando Rivera Lasso** | Backend Developer | [GitHub](https://github.com/kriv-bit) |
+| **Daniel Alejandro Lasso Molina** | DevOps & Database | [GitHub](https://github.com/gerbetwo) |
 
 ---
 
