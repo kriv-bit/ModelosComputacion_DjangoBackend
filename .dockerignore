@@ -21,3 +21,4 @@ Dockerfile
 node_modules
 staticfiles
 media
+Alpine
