@@ -12,14 +12,17 @@ WORKDIR /app
 COPY requirements.txt .
 RUN pip install --no-cache-dir -r requirements.txt
 
-# Copia el proyecto en APP
+# Copia el proyecto
 COPY . .
-
 
 # Expone el puerto 8000 (interno para Gunicorn, Nginx se conectará aquí)
 EXPOSE 8000
 
-RUN python manage.py collectstatic --noinput
+# Da permisos de ejecución al entrypoint
+RUN chmod +x /app/scripts/entrypoint.sh
+
+# Entrypoint: migraciones automáticas + collectstatic
+ENTRYPOINT ["/app/scripts/entrypoint.sh"]
 
 # Comando por defecto
 CMD ["gunicorn", "--bind", "0.0.0.0:8000", "mi_proyecto.wsgi:application"]

@@ -5,9 +5,11 @@ services:
       POSTGRES_DB: ${POSTGRES_DB}
       POSTGRES_USER: ${POSTGRES_USER}
       POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+      APP_DB_USER: ${APP_DB_USER}
+      APP_DB_PASSWORD: ${APP_DB_PASSWORD}
     volumes:
       - postgres_data:/var/lib/postgresql/data
-      - ./init.sql:/docker-entrypoint-initdb.d/init.sql
+      - ./scripts/init.sh:/docker-entrypoint-initdb.d/init.sh
     healthcheck:
       test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER} -d ${POSTGRES_DB}"]
       interval: 5s
@@ -18,13 +20,11 @@ services:
 
   web:
     build: .
-    # Ya NO exponemos el puerto 8000 al exterior, solo internamente para Nginx
     expose:
       - "8000"
     volumes:
-      # Montamos solo la carpeta de archivos estáticos y media si queremos persistencia
-      - static_volume:/app/staticfiles # STATIC_ROOT debe apuntar aquí
-      - media_volume:/app/media # MEDIA_ROOT (opcional)
+      - static_volume:/app/staticfiles
+      - media_volume:/app/media
     environment:
       DB_ENGINE: postgresql
       DB_NAME: ${POSTGRES_DB}
@@ -40,14 +40,15 @@ services:
         condition: service_healthy
     networks:
       - app-network
+
   nginx:
     image: nginx:alpine
     ports:
-      - "80:80" # Puerto HTTP estándar (cambiar a 443 con SSL)
+      - "80:80"
     volumes:
       - ./nginx.conf:/etc/nginx/conf.d/default.conf:ro
-      - static_volume:/app/staticfiles:ro # Sirve estáticos recolectados
-      - media_volume:/app/media:ro # Sirve archivos subidos por usuarios
+      - static_volume:/app/staticfiles:ro
+      - media_volume:/app/media:ro
     depends_on:
       - web
     networks:
