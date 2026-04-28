@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/bin/sh
 # init.sh - Script de inicialización de PostgreSQL
 # Crea un usuario dedicado para la aplicación Django
 
