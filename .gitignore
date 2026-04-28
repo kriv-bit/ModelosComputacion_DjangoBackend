@@ -58,3 +58,4 @@ postgres_data/
 
 # SQLite database (si usas en local)
 *.sqlite3
+.claude/
