@@ -1,19 +1,28 @@
-# Use official Python image
+# Usa Python 3.12 sobre Alpine (imagen ligera)
 FROM python:3.12-alpine
 
-# Set environment variables
+# Variables de entorno de Python
 ENV PYTHONDONTWRITEBYTECODE=1
 ENV PYTHONUNBUFFERED=1
 
-# Set work directory
+# Directorio de trabajo
 WORKDIR /app
 
-# Install dependencies
+# Copia e instala dependencias Python
 COPY requirements.txt .
 RUN pip install --no-cache-dir -r requirements.txt
 
-# Copy project
+# Copia el proyecto
 COPY . .
 
-# Run migrations and start server
-CMD python manage.py migrate && python manage.py runserver 0.0.0.0:8000
+# Expone el puerto 8000 (interno para Gunicorn, Nginx se conectará aquí)
+EXPOSE 8000
+
+# Da permisos de ejecución al entrypoint
+RUN chmod +x /app/scripts/entrypoint.sh
+
+# Entrypoint: migraciones automáticas + collectstatic
+ENTRYPOINT ["/app/scripts/entrypoint.sh"]
+
+# Comando por defecto
+CMD ["gunicorn", "--bind", "0.0.0.0:8000", "mi_proyecto.wsgi:application"]
