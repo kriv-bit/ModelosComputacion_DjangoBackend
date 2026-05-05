@@ -18,14 +18,8 @@ COPY . .
 # Expone el puerto 8000 (interno para Gunicorn, Nginx se conectará aquí)
 EXPOSE 8000
 
-# Da permisos de ejecución al entrypoint y fuerza saltos de linea Unix (LF)
-# (Soluciona el error 'no such file or directory' en contenedores Linux
-#  cuando los archivos se editan en Windows con CRLF)
-RUN chmod +x /app/scripts/entrypoint.sh && \
-    sed -i 's/\r$//' /app/scripts/entrypoint.sh
-
-# Entrypoint: migraciones automáticas + collectstatic
-ENTRYPOINT ["/app/scripts/entrypoint.sh"]
-
-# Comando por defecto
-CMD ["gunicorn", "--bind", "0.0.0.0:8000", "mi_proyecto.wsgi:application"]
+# Migraciones, collectstatic y arranque de Gunicorn (todo inline para evitar
+# problemas de compatibilidad con scripts .sh en Windows)
+CMD python manage.py migrate --noinput && \
+    python manage.py collectstatic --noinput --clear && \
+    exec gunicorn --bind 0.0.0.0:8000 mi_proyecto.wsgi:application
