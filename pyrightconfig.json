@@ -1,0 +1,33 @@
+{
+  "include": [
+    "."
+  ],
+  "exclude": [
+    "**/node_modules",
+    "**/__pycache__",
+    "**/migrations",
+    "venv",
+    ".venv"
+  ],
+  "pythonVersion": "3.12",
+  "typeCheckingMode": "basic",
+  "reportMissingTypeStubs": false,
+  "reportUnknownMemberType": false,
+  "reportUnknownParameterType": false,
+  "reportUnknownVariableType": false,
+  "reportMissingParameterType": false,
+  "reportMissingTypeArgs": false,
+  "reportUntypedBaseClass": false,
+  "reportGeneralTypeIssues": false,
+  "reportOptionalSubscript": false,
+  "reportOptionalMemberAccess": false,
+  "reportOptionalCall": false,
+  "reportOptionalIterable": false,
+  "reportOptionalOperand": false,
+  "reportAttributeAccessIssue": false,
+  "useLibraryCodeForTypes": true,
+  "reportAssignmentType": false,
+  "reportArgumentType": false,
+  "reportOperatorIssue": false,
+  "reportIndexIssue": false
+}
