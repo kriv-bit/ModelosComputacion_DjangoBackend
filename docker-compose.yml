@@ -10,6 +10,8 @@ services:
     volumes:
       - postgres_data:/var/lib/postgresql/data
       - ./scripts/init.sh:/docker-entrypoint-initdb.d/init.sh
+    entrypoint: >
+      sh -c "sed -i 's/\r$//' /docker-entrypoint-initdb.d/init.sh 2>/dev/null; exec docker-entrypoint.sh postgres"
     healthcheck:
       test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER} -d ${POSTGRES_DB}"]
       interval: 5s

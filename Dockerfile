@@ -22,7 +22,7 @@ EXPOSE 8000
 # (Soluciona el error 'no such file or directory' en contenedores Linux
 #  cuando los archivos se editan en Windows con CRLF)
 RUN chmod +x /app/scripts/entrypoint.sh && \
-    sed -i 's/\r$//' /app/scripts/entrypoint.sh /app/scripts/init.sh
+    sed -i 's/\r$//' /app/scripts/entrypoint.sh
 
 # Entrypoint: migraciones automáticas + collectstatic
 ENTRYPOINT ["/app/scripts/entrypoint.sh"]
