@@ -18,8 +18,11 @@ COPY . .
 # Expone el puerto 8000 (interno para Gunicorn, Nginx se conectará aquí)
 EXPOSE 8000
 
-# Da permisos de ejecución al entrypoint
-RUN chmod +x /app/scripts/entrypoint.sh
+# Da permisos de ejecución al entrypoint y fuerza saltos de linea Unix (LF)
+# (Soluciona el error 'no such file or directory' en contenedores Linux
+#  cuando los archivos se editan en Windows con CRLF)
+RUN chmod +x /app/scripts/entrypoint.sh && \
+    sed -i 's/\r$//' /app/scripts/entrypoint.sh /app/scripts/init.sh
 
 # Entrypoint: migraciones automáticas + collectstatic
 ENTRYPOINT ["/app/scripts/entrypoint.sh"]
