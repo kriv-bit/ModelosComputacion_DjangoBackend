@@ -4,9 +4,11 @@ from .views import (
     AutorRetrieveUpdateDestroy,
     LibroListCreate,
     LibroRetrieveUpdateDestroy,
+    health_check,
 )
 
 urlpatterns = [
+    path('health/', health_check, name='health-check'),
     path('autores/', AutorListCreate.as_view(), name='autor-list-create'),
     path('autores/<int:pk>/', AutorRetrieveUpdateDestroy.as_view(), name='autor-retrieve-update-destroy'),
     path('libros/', LibroListCreate.as_view(), name='libro-list-create'),
