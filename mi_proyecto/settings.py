@@ -42,6 +42,7 @@ INSTALLED_APPS = [
     "lectura",
     "gamificacion",
     "metas",
+    "comprension",
 ]
 
 MIDDLEWARE = [

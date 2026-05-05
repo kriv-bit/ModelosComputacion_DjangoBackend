@@ -25,4 +25,5 @@ urlpatterns = [
     path("api/lectura/", include("lectura.urls")),
     path("api/gamificacion/", include("gamificacion.urls")),
     path("api/metas/", include("metas.urls")),
+    path("api/comprension/", include("comprension.urls")),
 ]
