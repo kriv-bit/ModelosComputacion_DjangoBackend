@@ -10,6 +10,7 @@ from .serializers import (
     LoginSerializer,
     PerfilUsuarioSerializer,
     RegistroSerializer,
+    UserMeSerializer,
 )
 
 
@@ -24,11 +25,16 @@ class RegistroView(generics.CreateAPIView):
         serializer.is_valid(raise_exception=True)
         user = serializer.save()
         token, _ = Token.objects.get_or_create(user=user)
+        perfil = user.perfil
         return Response(
             {
                 "mensaje": "Usuario registrado exitosamente.",
-                "username": user.username,
-                "email": user.email,
+                "user": {
+                    "id": user.id,
+                    "name": user.get_full_name() or user.username,
+                    "email": user.email,
+                    "role": perfil.rol,
+                },
                 "token": token.key,
             },
             status=status.HTTP_201_CREATED,
@@ -53,12 +59,20 @@ class LoginView(generics.GenericAPIView):
         if user is not None:
             login(request, user)
             token, _ = Token.objects.get_or_create(user=user)
+            try:
+                perfil = PerfilUsuario.objects.get(user=user)
+                rol = perfil.rol
+            except PerfilUsuario.DoesNotExist:
+                rol = "user"
             return Response(
                 {
                     "mensaje": "Inicio de sesión exitoso.",
-                    "username": user.username,
-                    "email": user.email,
-                    "user_id": user.id,
+                    "user": {
+                        "id": user.id,
+                        "name": user.get_full_name() or user.username,
+                        "email": user.email,
+                        "role": rol,
+                    },
                     "token": token.key,
                 },
                 status=status.HTTP_200_OK,
@@ -73,11 +87,31 @@ class LogoutView(APIView):
     """Cierra la sesión del usuario."""
 
     def post(self, request):
+        # Eliminar token si existe
+        if request.user.is_authenticated:
+            Token.objects.filter(user=request.user).delete()
         logout(request)
         return Response(
             {"mensaje": "Sesión cerrada exitosamente."},
             status=status.HTTP_200_OK,
         )
+
+
+class MeView(APIView):
+    """Retorna los datos del usuario autenticado (para rehidratar sesión)."""
+
+    permission_classes = [permissions.IsAuthenticated]
+
+    def get(self, request):
+        try:
+            perfil = PerfilUsuario.objects.get(user=request.user)
+        except PerfilUsuario.DoesNotExist:
+            return Response(
+                {"id": request.user.id, "name": request.user.username, "email": request.user.email, "role": "user"},
+                status=status.HTTP_200_OK,
+            )
+        serializer = UserMeSerializer(perfil)
+        return Response(serializer.data)
 
 
 class PerfilView(generics.RetrieveUpdateAPIView):
@@ -87,8 +121,11 @@ class PerfilView(generics.RetrieveUpdateAPIView):
     permission_classes = [permissions.IsAuthenticated]
 
     def get_object(self):
-        perfil, _ = PerfilUsuario.objects.get_or_create(user=self.request.user)
-        return perfil
+        try:
+            return PerfilUsuario.objects.get(user=self.request.user)
+        except PerfilUsuario.DoesNotExist:
+            from rest_framework.exceptions import NotFound
+            raise NotFound("Perfil no encontrado. Completa tu registro.")
 
 
 class CambioPasswordView(generics.GenericAPIView):

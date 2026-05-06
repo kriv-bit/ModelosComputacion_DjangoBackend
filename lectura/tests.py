@@ -155,7 +155,11 @@ class SesionLecturaTests(BaseTest):
         self.client.logout()
         url = reverse("sesion-list-create")
         response = self.client.get(url)
-        self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
+        # Con TokenAuthentication, DRF devuelve 401 para no autenticados
+        self.assertIn(response.status_code, [
+            status.HTTP_401_UNAUTHORIZED,
+            status.HTTP_403_FORBIDDEN,
+        ])
 
 
 class ProgresoLibroTests(BaseTest):

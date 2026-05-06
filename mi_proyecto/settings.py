@@ -37,6 +37,7 @@ INSTALLED_APPS = [
     "django.contrib.staticfiles",
     "rest_framework",
     "rest_framework.authtoken",
+    "corsheaders",
     "libros",
     "cuentas",
     "lectura",
@@ -47,6 +48,7 @@ INSTALLED_APPS = [
 
 MIDDLEWARE = [
     "django.middleware.security.SecurityMiddleware",
+    "corsheaders.middleware.CorsMiddleware",
     "django.contrib.sessions.middleware.SessionMiddleware",
     "django.middleware.common.CommonMiddleware",
     "django.middleware.csrf.CsrfViewMiddleware",
@@ -92,8 +94,11 @@ DATABASES = {
 if os.environ.get("DB_ENGINE") == "postgresql":
     DATABASES["default"] = {
         "ENGINE": "django.db.backends.postgresql",
+        # pyrefly: ignore [bad-typed-dict-key]
         "NAME": os.environ.get("DB_NAME"),
+        # pyrefly: ignore [bad-typed-dict-key]
         "USER": os.environ.get("DB_USER"),
+        # pyrefly: ignore [bad-typed-dict-key]
         "PASSWORD": os.environ.get("DB_PASSWORD"),
         "HOST": os.environ.get("DB_HOST", "db"),
         "PORT": os.environ.get("DB_PORT", "5432"),
@@ -136,14 +141,18 @@ USE_TZ = True
 # Archivos estáticos
 REST_FRAMEWORK = {
     "DEFAULT_AUTHENTICATION_CLASSES": [
-        "rest_framework.authentication.SessionAuthentication",
-        "rest_framework.authentication.BasicAuthentication",
         "rest_framework.authentication.TokenAuthentication",
+        "rest_framework.authentication.SessionAuthentication",
     ],
     "DEFAULT_PERMISSION_CLASSES": [
-        "rest_framework.permissions.IsAuthenticated",
+        "rest_framework.permissions.AllowAny",
     ],
 }
+
+# CORS — En Docker, Nginx unifica todo bajo el mismo origen.
+# Permitimos todo para simplificar desarrollo local.
+CORS_ALLOW_ALL_ORIGINS = True
+CORS_ALLOW_CREDENTIALS = True
 
 STATIC_URL = "/static/"
 STATIC_ROOT = os.path.join(

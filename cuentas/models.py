@@ -11,6 +11,12 @@ class PerfilUsuario(models.Model):
         ("N", "Prefiero no decirlo"),
     ]
 
+    ROL_CHOICES = [
+        ("user", "Usuario"),
+        ("librarian", "Bibliotecario"),
+        ("admin", "Administrador"),
+    ]
+
     user = models.OneToOneField(
         User,
         on_delete=models.CASCADE,
@@ -28,6 +34,12 @@ class PerfilUsuario(models.Model):
     pais = models.CharField(
         max_length=100,
         verbose_name="País",
+    )
+    rol = models.CharField(
+        max_length=10,
+        choices=ROL_CHOICES,
+        default="user",
+        verbose_name="Rol",
     )
     fecha_registro = models.DateTimeField(
         auto_now_add=True,

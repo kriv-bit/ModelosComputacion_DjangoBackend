@@ -30,8 +30,10 @@ class RegistroTests(TestCase):
         }
         response = self.client.post(self.url, data, format="json")
         self.assertEqual(response.status_code, status.HTTP_201_CREATED)
-        self.assertEqual(response.data["username"], "testuser")
-        self.assertEqual(response.data["email"], "test@example.com")
+        # La nueva respuesta tiene formato {user: {id, name, email, role}, token: ...}
+        self.assertIn("user", response.data)
+        self.assertIn("token", response.data)
+        self.assertEqual(response.data["user"]["email"], "test@example.com")
         self.assertTrue(User.objects.filter(username="testuser").exists())
         self.assertTrue(
             PerfilUsuario.objects.filter(user__username="testuser").exists()
@@ -109,7 +111,10 @@ class LoginTests(TestCase):
         }
         response = self.client.post(self.url, data, format="json")
         self.assertEqual(response.status_code, status.HTTP_200_OK)
-        self.assertEqual(response.data["username"], "testuser")
+        # La nueva respuesta tiene formato {user: {id, name, email, role}, token: ...}
+        self.assertIn("user", response.data)
+        self.assertIn("token", response.data)
+        self.assertEqual(response.data["user"]["email"], "test@example.com")
 
     def test_login_credenciales_invalidas(self):
         """Verifica que falle con credenciales incorrectas."""
@@ -151,7 +156,11 @@ class PerfilTests(TestCase):
     def test_perfil_requiere_autenticacion(self):
         """Verifica que se requiera autenticación para ver el perfil."""
         response = self.client.get(self.url)
-        self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
+        # Con TokenAuthentication, DRF devuelve 401 (no autenticado)
+        self.assertIn(response.status_code, [
+            status.HTTP_401_UNAUTHORIZED,
+            status.HTTP_403_FORBIDDEN,
+        ])
 
     def test_obtener_perfil(self):
         """Verifica que un usuario autenticado pueda ver su perfil."""
@@ -247,7 +256,11 @@ class CambioPasswordTests(TestCase):
             "password_nueva2": "NuevaPass123!",
         }
         response = self.client.post(self.url, data, format="json")
-        self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
+        # Con TokenAuthentication DRF devuelve 401
+        self.assertIn(response.status_code, [
+            status.HTTP_401_UNAUTHORIZED,
+            status.HTTP_403_FORBIDDEN,
+        ])
 
 
 class LogoutTests(TestCase):

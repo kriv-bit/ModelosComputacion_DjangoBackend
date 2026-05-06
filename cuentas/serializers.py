@@ -23,17 +23,25 @@ class RegistroSerializer(serializers.ModelSerializer):
     fecha_nacimiento = serializers.DateField()
     genero = serializers.ChoiceField(choices=PerfilUsuario.GENERO_CHOICES)
     pais = serializers.CharField(max_length=100)
+    rol = serializers.ChoiceField(
+        choices=PerfilUsuario.ROL_CHOICES,
+        default="user",
+        required=False,
+    )
 
     class Meta:
         model = User
         fields = [
             "username",
             "email",
+            "first_name",
+            "last_name",
             "password",
             "password2",
             "fecha_nacimiento",
             "genero",
             "pais",
+            "rol",
         ]
 
     def validate(self, attrs):
@@ -51,6 +59,7 @@ class RegistroSerializer(serializers.ModelSerializer):
             "fecha_nacimiento": validated_data.pop("fecha_nacimiento"),
             "genero": validated_data.pop("genero"),
             "pais": validated_data.pop("pais"),
+            "rol": validated_data.pop("rol", "user"),
         }
 
         user = User(**validated_data)
@@ -78,7 +87,9 @@ class PerfilUsuarioSerializer(serializers.ModelSerializer):
 
     username = serializers.CharField(source="user.username", read_only=True)
     email = serializers.EmailField(source="user.email", read_only=True)
+    name = serializers.SerializerMethodField()
     edad = serializers.IntegerField(read_only=True)
+    rol = serializers.CharField(read_only=True)
 
     class Meta:
         model = PerfilUsuario
@@ -86,13 +97,32 @@ class PerfilUsuarioSerializer(serializers.ModelSerializer):
             "id",
             "username",
             "email",
+            "name",
             "fecha_nacimiento",
             "edad",
             "genero",
             "pais",
+            "rol",
             "fecha_registro",
         ]
         read_only_fields = ["id", "fecha_registro"]
+
+    def get_name(self, obj) -> str:
+        full = obj.user.get_full_name()
+        return full if full else obj.user.username
+
+
+class UserMeSerializer(serializers.Serializer):
+    """Serializer para el endpoint /api/auth/me/."""
+
+    id = serializers.IntegerField(source="user.id")
+    name = serializers.SerializerMethodField()
+    email = serializers.EmailField(source="user.email")
+    role = serializers.CharField(source="rol")
+
+    def get_name(self, obj) -> str:
+        full = obj.user.get_full_name()
+        return full if full else obj.user.username
 
 
 class CambioPasswordSerializer(serializers.Serializer):

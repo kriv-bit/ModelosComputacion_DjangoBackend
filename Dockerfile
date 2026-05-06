@@ -18,8 +18,8 @@ COPY . .
 # Expone el puerto 8000 (interno para Gunicorn, Nginx se conectará aquí)
 EXPOSE 8000
 
-# Migraciones, collectstatic y arranque de Gunicorn (todo inline para evitar
-# problemas de compatibilidad con scripts .sh en Windows)
+# Migraciones, seed data, collectstatic y arranque de Gunicorn
 CMD python manage.py migrate --noinput && \
+    python manage.py seed_data && \
     python manage.py collectstatic --noinput --clear && \
     exec gunicorn --bind 0.0.0.0:8000 mi_proyecto.wsgi:application

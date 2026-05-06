@@ -127,7 +127,10 @@ class ResponderPruebaTests(BaseTest):
             },
             format="json",
         )
-        self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
+        self.assertIn(response.status_code, [
+            status.HTTP_401_UNAUTHORIZED,
+            status.HTTP_403_FORBIDDEN,
+        ])
 
     def test_responder_con_opcion_invalida(self):
         url = reverse("responder-prueba", args=[self.prueba.id])
