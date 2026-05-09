@@ -149,10 +149,12 @@ REST_FRAMEWORK = {
     ],
 }
 
-# CORS — En Docker, Nginx unifica todo bajo el mismo origen.
-# Permitimos todo para simplificar desarrollo local.
-CORS_ALLOW_ALL_ORIGINS = True
+CORS_ALLOWED_ORIGINS = os.environ.get(
+    "CORS_ALLOWED_ORIGINS", "http://localhost:4200"
+).split(",")
+CORS_ALLOW_ALL_ORIGINS = False
 CORS_ALLOW_CREDENTIALS = True
+CSRF_TRUSTED_ORIGINS = CORS_ALLOWED_ORIGINS
 
 STATIC_URL = "/static/"
 STATIC_ROOT = os.path.join(
