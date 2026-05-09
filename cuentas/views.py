@@ -86,6 +86,8 @@ class LoginView(generics.GenericAPIView):
 class LogoutView(APIView):
     """Cierra la sesión del usuario."""
 
+    permission_classes = [permissions.AllowAny]
+
     def post(self, request):
         # Eliminar token si existe
         if request.user.is_authenticated:

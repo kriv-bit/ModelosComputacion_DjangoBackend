@@ -47,11 +47,13 @@ def health_check(request):
 class AutorListCreate(generics.ListCreateAPIView):
     queryset = Autor.objects.all()
     serializer_class = AutorSerializer
+    permission_classes = [permissions.AllowAny]
 
 
 class AutorRetrieveUpdateDestroy(generics.RetrieveUpdateDestroyAPIView):
     queryset = Autor.objects.all()
     serializer_class = AutorSerializer
+    permission_classes = [permissions.AllowAny]
 
 
 # ─── Libros ───────────────────────────────────────────────────────
@@ -251,7 +253,7 @@ class PrestamoReturnView(APIView):
 class EstadisticasAdminView(APIView):
     """Estadísticas generales para el dashboard de admin."""
 
-    permission_classes = [permissions.AllowAny]
+    permission_classes = [permissions.IsAuthenticated]
 
     def get(self, request):
         libros = Libro.objects.all()
