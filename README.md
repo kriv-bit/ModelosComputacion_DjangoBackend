@@ -84,6 +84,18 @@ docker-compose up --build
 # Admin:    http://localhost:8000/admin/
 ```
 
+### Inicialización manual en Docker o local
+
+Cuando necesites preparar la base de datos o los estáticos por separado, ejecuta estos comandos de forma manual:
+
+```bash
+python manage.py migrate
+python manage.py seed_data
+python manage.py collectstatic --noinput --clear
+```
+
+`migrate` aplica el esquema, `seed_data` carga datos iniciales y `collectstatic` deja listos los archivos estáticos para Nginx.
+
 ### Opción 2: Desarrollo Local (sin Docker)
 
 ```bash
