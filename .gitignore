@@ -10,16 +10,25 @@ ENV/
 env.bak/
 venv.bak/
 Alpine/
+.venv/
+
+# Common generated files
+dist/
+node_modules/
+.angular/
+build-errors.log
+media/
+staticfiles/
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+.env
+db.sqlite3
 
 # Django
 *.log
 local_settings.py
-db.sqlite3
 db.sqlite3-journal
-
-# Media and static
-media/
-staticfiles/
 
 # IDE
 .vscode/
@@ -52,6 +61,7 @@ yarn-error.log*
 
 # Environment variables
 .env
+.env.*
 
 # PostgreSQL data
 postgres_data/
