@@ -600,7 +600,7 @@ class ModelTests(TestCase):
 
 ```bash
 python manage.py migrate
-python manage.py dbshell < scripts/seed.sql
+python manage.py seed_data
 ```
 
 ### 11.2 Datos incluidos

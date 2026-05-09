@@ -30,11 +30,12 @@ VALUES
 -- ============================================================================
 -- 3. PERFILES DE USUARIO (cuentas_perfilusuario)
 -- ============================================================================
-INSERT INTO cuentas_perfilusuario (id, user_id, fecha_nacimiento, genero, pais, fecha_registro)
+-- SECCIÓN 3 CORREGIDA
+INSERT INTO cuentas_perfilusuario (id, user_id, fecha_nacimiento, genero, pais, fecha_registro, rol)
 VALUES
-(1, 1, '1990-03-15', 'M', 'México', '2026-05-01 00:00:00'),
-(2, 2, '1995-07-22', 'M', 'Colombia', '2026-05-01 00:00:00'),
-(3, 3, '2000-11-08', 'F', 'Argentina', '2026-05-02 00:00:00');
+(1, 1, '1990-03-15', 'M', 'México', '2026-05-01 00:00:00', 'admin'),
+(2, 2, '1995-07-22', 'M', 'Colombia', '2026-05-01 00:00:00', 'lector'),
+(3, 3, '2000-11-08', 'F', 'Argentina', '2026-05-02 00:00:00', 'lector');
 
 -- ============================================================================
 -- 4. AUTORES (libros_autor)
@@ -50,14 +51,14 @@ VALUES
 -- ============================================================================
 -- 5. LIBROS (libros_libro)
 -- ============================================================================
-INSERT INTO libros_libro (id, titulo, autor_id, isbn, fecha_publicacion, genero, numero_paginas, editorial, descripcion)
+-- SECCIÓN 5 CORREGIDA
+INSERT INTO libros_libro (id, titulo, autor_id, isbn, fecha_publicacion, genero, numero_paginas, editorial, descripcion, disponible)
 VALUES
-(1, 'Cien años de soledad', 1, '9788437604947', '2026-05-01', 'Ficción', 471, 'Sudamericana', 'La historia de la familia Buendía en Macondo, una obra maestra del realismo mágico.'),
-(2, 'El amor en los tiempos del cólera', 1, '9780307389732', '2026-05-01', 'Ficción', 368, 'Sudamericana', 'Una historia de amor que dura toda una vida.'),
-(3, 'La casa de los espíritus', 2, '9780060883287', '2026-05-01', 'Ficción', 543, 'Plaza & Janés', 'La historia de la familia Trueba a lo largo de varias generaciones.'),
-(4, 'Rayuela', 3, '9788437604572', '2026-05-01', 'Ficción', 736, 'Sudamericana', 'Una novela que se puede leer de múltiples maneras.'),
-(5, 'Como agua para chocolate', 5, '9780385420167', '2026-05-01', 'Ficción', 256, 'Plaza & Janés', 'Novela de recetas y amores prohibidos en la Revolución Mexicana.');
-
+(1, 'Cien años de soledad', 1, '9788437604947', '2026-05-01', 'Ficción', 471, 'Sudamericana', 'La historia de...', 1),
+(2, 'El amor en los tiempos del cólera', 1, '9780307389732', '2026-05-01', 'Ficción', 368, 'Sudamericana', 'Una historia de...', 1),
+(3, 'La casa de los espíritus', 2, '9780060883287', '2026-05-01', 'Ficción', 543, 'Plaza & Janés', 'La historia de...', 1),
+(4, 'Rayuela', 3, '9788437604572', '2026-05-01', 'Ficción', 736, 'Sudamericana', 'Una novela que...', 1),
+(5, 'Como agua para chocolate', 5, '9780385420167', '2026-05-01', 'Ficción', 256, 'Plaza & Janés', 'Novela de recetas...', 1);
 -- ============================================================================
 -- 6. SESIONES DE LECTURA (lectura_sesionlectura)
 -- ============================================================================
