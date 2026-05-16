@@ -23,7 +23,11 @@ load_dotenv(BASE_DIR / ".env")
 # Quick-start development settings...
 SECRET_KEY = os.environ.get("SECRET_KEY", "django-insecure-default-only-dev")
 DEBUG = os.environ.get("DEBUG", "True") == "True"
-ALLOWED_HOSTS = os.environ.get("ALLOWED_HOSTS", "*").split(",")
+ALLOWED_HOSTS = [
+    host.strip()
+    for host in os.environ.get("ALLOWED_HOSTS", "*").split(",")
+    if host.strip()
+]
 
 
 # Application definition
@@ -149,12 +153,22 @@ REST_FRAMEWORK = {
     ],
 }
 
-CORS_ALLOWED_ORIGINS = os.environ.get(
-    "CORS_ALLOWED_ORIGINS", "http://localhost:4200"
-).split(",")
+CORS_ALLOWED_ORIGINS = [
+    origin.strip()
+    for origin in os.environ.get(
+        "CORS_ALLOWED_ORIGINS", "http://localhost:4200,http://localhost:8080"
+    ).split(",")
+    if origin.strip()
+]
 CORS_ALLOW_ALL_ORIGINS = False
 CORS_ALLOW_CREDENTIALS = True
-CSRF_TRUSTED_ORIGINS = CORS_ALLOWED_ORIGINS
+CSRF_TRUSTED_ORIGINS = [
+    origin.strip()
+    for origin in os.environ.get(
+        "CSRF_TRUSTED_ORIGINS", ",".join(CORS_ALLOWED_ORIGINS)
+    ).split(",")
+    if origin.strip()
+]
 
 STATIC_URL = "/static/"
 STATIC_ROOT = os.path.join(
