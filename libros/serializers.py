@@ -14,9 +14,9 @@ class LibroSerializer(serializers.ModelSerializer):
     """Serializer que mapea Libro de Django al formato Book del frontend."""
 
     id = serializers.IntegerField(read_only=True)
-    author = serializers.CharField(source="autor.nombre", read_only=True)
+    author = serializers.CharField(source="autor.nombre", required=False)
     autor_id = serializers.PrimaryKeyRelatedField(
-        queryset=Autor.objects.all(), source="autor", write_only=True
+        queryset=Autor.objects.all(), source="autor", write_only=True, required=False
     )
     title = serializers.CharField(source="titulo")
     isbn = serializers.CharField(required=False, allow_blank=True)
@@ -62,6 +62,29 @@ class LibroSerializer(serializers.ModelSerializer):
             "pdfUrl",
             "is_reserved_by_me",
         ]
+
+    def create(self, validated_data):
+        autor_data = validated_data.pop("autor", None)
+        if isinstance(autor_data, Autor):
+            validated_data["autor"] = autor_data
+        elif autor_data and isinstance(autor_data, dict) and "nombre" in autor_data:
+            autor, _ = Autor.objects.get_or_create(nombre=autor_data["nombre"])
+            validated_data["autor"] = autor
+        else:
+            autor, _ = Autor.objects.get_or_create(nombre="Desconocido")
+            validated_data["autor"] = autor
+            
+        return super().create(validated_data)
+
+    def update(self, instance, validated_data):
+        autor_data = validated_data.pop("autor", None)
+        if isinstance(autor_data, Autor):
+            validated_data["autor"] = autor_data
+        elif autor_data and isinstance(autor_data, dict) and "nombre" in autor_data:
+            autor, _ = Autor.objects.get_or_create(nombre=autor_data["nombre"])
+            validated_data["autor"] = autor
+            
+        return super().update(instance, validated_data)
 
     def get_rating(self, obj: Libro) -> float:
         avg = obj.resenas.aggregate(avg=Avg("calificacion"))["avg"]
