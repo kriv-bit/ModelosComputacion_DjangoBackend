@@ -9,6 +9,7 @@ from .views import (
     FavoritoListCreate,
     LibroListCreate,
     LibroPDFDownloadView,
+    LibroPDFUploadView,
     LibroPDFServeView,
     LibroRetrieveUpdateDestroy,
     PrestamoListCreate,
@@ -42,6 +43,12 @@ urlpatterns = [
         "libros/<int:pk>/download-pdf/",
         LibroPDFDownloadView.as_view(),
         name="libro-pdf-download",
+    ),
+    # PDF: subir archivo desde cliente (admin/librarian)
+    path(
+        "libros/<int:pk>/upload-pdf/",
+        LibroPDFUploadView.as_view(),
+        name="libro-pdf-upload",
     ),
     # PDF: servir al frontend (auth + préstamo activo)
     path(

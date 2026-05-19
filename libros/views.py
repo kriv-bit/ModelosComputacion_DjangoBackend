@@ -216,8 +216,6 @@ class PrestamoListCreate(generics.ListCreateAPIView):
         return qs
 
     def get_permissions(self):
-        if self.request.method == "POST":
-            return [IsAdminOrLibrarian()]
         return [permissions.IsAuthenticated()]
 
     def perform_create(self, serializer):
@@ -234,7 +232,7 @@ class PrestamoListCreate(generics.ListCreateAPIView):
 class PrestamoReturnView(APIView):
     """Marca un préstamo como devuelto."""
 
-    permission_classes = [IsAdminOrLibrarian]
+    permission_classes = [permissions.IsAuthenticated]
 
     def post(self, request, pk):
         try:
@@ -244,6 +242,18 @@ class PrestamoReturnView(APIView):
                 {"error": "Préstamo no encontrado."},
                 status=status.HTTP_404_NOT_FOUND,
             )
+
+        # Si no es privilegiado, verificar que sea el dueño del préstamo
+        is_privileged = (
+            request.user.is_staff
+            or (hasattr(request.user, "perfil") and request.user.perfil.rol in ("admin", "librarian"))
+        )
+        if not is_privileged and prestamo.usuario != request.user:
+            return Response(
+                {"error": "No tienes permiso para devolver este préstamo."},
+                status=status.HTTP_403_FORBIDDEN,
+            )
+
         from django.utils import timezone
 
         prestamo.estado = "returned"
@@ -368,6 +378,60 @@ class LibroPDFDownloadView(APIView):
             {
                 "message": "PDF descargado y guardado exitosamente.",
                 "filename": filename,
+                "pdfUrl": request.build_absolute_uri(libro.pdf_file.url),
+            },
+            status=status.HTTP_200_OK,
+        )
+
+
+class LibroPDFUploadView(APIView):
+    """
+    POST /api/libros/<id>/upload-pdf/
+    Sube un PDF desde el cliente y lo asocia al libro. Solo admin/librarian.
+    Body: form-data con el campo 'file'
+    """
+
+    permission_classes = [IsAdminOrLibrarian]
+
+    def post(self, request, pk):
+        try:
+            libro = Libro.objects.get(pk=pk)
+        except Libro.DoesNotExist:
+            return Response(
+                {"error": "Libro no encontrado."},
+                status=status.HTTP_404_NOT_FOUND,
+            )
+
+        pdf_file = request.FILES.get('file')
+        if not pdf_file:
+            return Response(
+                {"error": "Se requiere el archivo PDF en el campo 'file'."},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
+
+        if not pdf_file.name.lower().endswith('.pdf'):
+            return Response(
+                {"error": "El archivo debe ser un PDF con extensión .pdf."},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
+
+        import re
+        import uuid
+        
+        # Generar nombre único y seguro para el archivo, igual que en download
+        safe_title = re.sub(r"[^a-zA-Z0-9_-]", "_", libro.titulo[:40])
+        filename = f"{safe_title}_{uuid.uuid4().hex[:8]}.pdf"
+
+        # Eliminar PDF anterior si existe
+        if libro.pdf_file:
+            libro.pdf_file.delete(save=False)
+
+        # Guardar archivo con el nuevo nombre, esto también hace el save() en la base de datos
+        libro.pdf_file.save(filename, pdf_file, save=True)
+
+        return Response(
+            {
+                "message": "PDF subido y guardado exitosamente.",
                 "pdfUrl": request.build_absolute_uri(libro.pdf_file.url),
             },
             status=status.HTTP_200_OK,

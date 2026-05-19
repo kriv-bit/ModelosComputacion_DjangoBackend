@@ -38,6 +38,7 @@ class LibroSerializer(serializers.ModelSerializer):
     reviewCount = serializers.SerializerMethodField()
     hasPdf = serializers.SerializerMethodField()
     pdfUrl = serializers.SerializerMethodField()
+    is_reserved_by_me = serializers.SerializerMethodField()
 
     class Meta:
         model = Libro
@@ -59,6 +60,7 @@ class LibroSerializer(serializers.ModelSerializer):
             "reviewCount",
             "hasPdf",
             "pdfUrl",
+            "is_reserved_by_me",
         ]
 
     def get_rating(self, obj: Libro) -> float:
@@ -78,6 +80,15 @@ class LibroSerializer(serializers.ModelSerializer):
         if request:
             return request.build_absolute_uri(f"/api/libros/{obj.pk}/pdf/")
         return f"/api/libros/{obj.pk}/pdf/"
+
+    def get_is_reserved_by_me(self, obj: Libro) -> bool:
+        request = self.context.get("request")
+        if request and request.user and request.user.is_authenticated:
+            return obj.prestamos.filter(
+                usuario=request.user,
+                estado__in=["active", "overdue"]
+            ).exists()
+        return False
 
 
 
