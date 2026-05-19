@@ -18,5 +18,11 @@ COPY . .
 # Expone el puerto 8000 (interno para Gunicorn, Nginx se conectará aquí)
 EXPOSE 8000
 
+# Dar permisos de ejecución al entrypoint
+RUN chmod +x /app/entrypoint.sh
+
+# Punto de entrada para ejecutar migraciones/seeds y luego el CMD
+ENTRYPOINT ["/app/entrypoint.sh"]
+
 # Arranque del servidor WSGI
-CMD exec gunicorn --bind 0.0.0.0:8000 mi_proyecto.wsgi:application
+CMD ["gunicorn", "--bind", "0.0.0.0:8000", "mi_proyecto.wsgi:application"]
