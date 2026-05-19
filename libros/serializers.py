@@ -36,6 +36,8 @@ class LibroSerializer(serializers.ModelSerializer):
     available = serializers.BooleanField(source="disponible", required=False)
     rating = serializers.SerializerMethodField()
     reviewCount = serializers.SerializerMethodField()
+    hasPdf = serializers.SerializerMethodField()
+    pdfUrl = serializers.SerializerMethodField()
 
     class Meta:
         model = Libro
@@ -55,6 +57,8 @@ class LibroSerializer(serializers.ModelSerializer):
             "available",
             "rating",
             "reviewCount",
+            "hasPdf",
+            "pdfUrl",
         ]
 
     def get_rating(self, obj: Libro) -> float:
@@ -63,6 +67,18 @@ class LibroSerializer(serializers.ModelSerializer):
 
     def get_reviewCount(self, obj: Libro) -> int:
         return obj.resenas.count()
+
+    def get_hasPdf(self, obj: Libro) -> bool:
+        return bool(obj.pdf_file)
+
+    def get_pdfUrl(self, obj: Libro) -> str | None:
+        if not obj.pdf_file:
+            return None
+        request = self.context.get("request")
+        if request:
+            return request.build_absolute_uri(f"/api/libros/{obj.pk}/pdf/")
+        return f"/api/libros/{obj.pk}/pdf/"
+
 
 
 class ResenaSerializer(serializers.ModelSerializer):

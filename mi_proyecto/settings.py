@@ -29,6 +29,9 @@ ALLOWED_HOSTS = [
     if host.strip()
 ]
 
+# DeepSeek / OpenAI compatible API
+DEEPSEEK_API_KEY = os.environ.get("DEEPSEEK_API_KEY", "")
+
 
 # Application definition
 

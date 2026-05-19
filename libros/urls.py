@@ -3,10 +3,13 @@ from django.urls import path
 from .views import (
     AutorListCreate,
     AutorRetrieveUpdateDestroy,
+    ChatView,
     EstadisticasAdminView,
     FavoritoDestroy,
     FavoritoListCreate,
     LibroListCreate,
+    LibroPDFDownloadView,
+    LibroPDFServeView,
     LibroRetrieveUpdateDestroy,
     PrestamoListCreate,
     PrestamoReturnView,
@@ -33,6 +36,18 @@ urlpatterns = [
         "libros/<int:pk>/",
         LibroRetrieveUpdateDestroy.as_view(),
         name="libro-detail",
+    ),
+    # PDF: descargar desde URL (admin/librarian)
+    path(
+        "libros/<int:pk>/download-pdf/",
+        LibroPDFDownloadView.as_view(),
+        name="libro-pdf-download",
+    ),
+    # PDF: servir al frontend (auth + préstamo activo)
+    path(
+        "libros/<int:pk>/pdf/",
+        LibroPDFServeView.as_view(),
+        name="libro-pdf-serve",
     ),
     # Reseñas
     path("resenas/", ResenaListCreate.as_view(), name="resena-list-create"),
@@ -67,4 +82,6 @@ urlpatterns = [
         EstadisticasAdminView.as_view(),
         name="estadisticas-admin",
     ),
+    # Chat IA con DeepSeek
+    path("chat/", ChatView.as_view(), name="chat-ia"),
 ]

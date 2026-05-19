@@ -42,6 +42,18 @@ class Libro(models.Model):
         default=True,
         verbose_name="Disponible",
     )
+    pdf_file = models.FileField(
+        upload_to="pdfs/",
+        blank=True,
+        null=True,
+        verbose_name="Archivo PDF",
+    )
+    pdf_source_url = models.URLField(
+        max_length=1000,
+        blank=True,
+        null=True,
+        verbose_name="URL de origen del PDF",
+    )
 
     # pyrefly: ignore [bad-override]
     def __str__(self):
